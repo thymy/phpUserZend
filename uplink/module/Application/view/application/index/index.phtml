@@ -1,0 +1,83 @@
+<div class="hero-unit">
+    <h2><?php echo sprintf($this->translate('%sUser Login Page%s'), '<span class="zf-green">', '</span>') ?></h2>
+    
+    <!-- script -->
+    <script type="text/javascript">
+	$(document).ready(function(){
+	    $("#usn").focus();
+	    //$("#usn").val('<!-- { $User.email|escape:"htmlall" } -->');
+	    $('#usn').keyup(function(e) 
+	    {
+	        if(e.keyCode == 13) 
+	        {
+	            $("#btnSubmit").click();
+	        }
+	    });
+	    
+	    $('#pwd').keyup(function(e) 
+	    {
+	        if(e.keyCode == 13) 
+	        {
+	            $("#btnSubmit").click();
+	        }
+	    });
+	    
+	});        
+	</script>
+    
+    <form action="" method="post" name="form_login">
+    <div style="padding: 10px;">
+    	<div>
+		    <table style="BORDER-COLLAPSE: collapse" cellspacing="0" cellpadding="5" align="center" width="40%" >
+		    	<tbody>
+		    		<tr>
+		    			<td class="cells" >&nbsp;</td>
+		      			<td class="" width="70%" >
+		      				<div style="font-size: 10pt; color: #ff0000;">
+		      					<?php echo $this->escapeHtml($message);?>
+		      				</div>
+		      			</td>
+		    		</tr>
+		    		<tr>
+		      			<td class="cells" >Username</td>
+		      			<td class="" width="70%" >
+		        			<input type="text" id="usn" name="usn" value='' autocomplete="OFF" size="30" maxlength="50" style={width="200";}><br>
+		      			</td>
+		    		</tr>
+		    		<tr>
+		      			<td class="cells" >Password</td>
+		      			<td class="" width="70%" >
+		        			<input type="password" id="pwd" name="pwd" value='' autocomplete="OFF" size="30" maxlength="50" style={width="200";}><br>
+		      			</td>
+		    		</tr>
+		    		<tr>
+		    			<td>&nbsp;</td>
+		    			<td>
+		    				<div>
+						    	<a class="btn btn-success btn-large" href="javascript:login_check();" id="btnSubmit" name="btnSubmit"><?php echo $this->translate('Login')?></a>
+						    </div>
+		    			</td>
+		    		</tr>
+		    	</tbody>
+		    </table>
+		</div>
+	       
+    </div>
+	</form>
+</div>
+
+<div class="" width="100%">
+
+    <div>
+        <h2></h2>
+        <p>
+        <?php
+        	/*
+        	foreach ($message01 as $key=>$val)
+        	{
+        		echo $key.' = '."<br><br>";
+        		print_r($val);
+        	}*/
+        ?></p>
+    </div>
+</div>

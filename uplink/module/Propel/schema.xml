@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database name="uplink_test" defaultIdMethod="native" namespace="Propel">
+	<table name="user" phpName="User">
+		<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+		<column name="username" type="varchar" size="25" required="true" />
+			<validator column="username">
+				<rule
+					name="unique"
+					message="Username already exists!" />
+				<rule
+					name="required"
+					message="Username is required." />
+				<rule
+					name="minLength"
+					value="4"
+					message="Username must be at least ${value} characters!" />
+			</validator>
+		<column name="first_name" type="varchar" size="128" required="true" />
+			<validator column="first_name">
+				<rule
+					name="required"
+					message="First name is required." />
+			</validator>
+		<column name="last_name" type="varchar" size="128" required="true" />
+			<validator column="last_name">
+				<rule
+					name="required"
+					message="Last name is required." />
+			</validator>
+		<column name="password" type="varchar" size="128" required="true" />
+			<validator column="password">
+				<rule
+					name="required"
+					message="Password is required." />
+			</validator>
+	</table>
+	<table name="rights" phpName="Rights">
+		<column name="user_id" type="integer" primaryKey="true" />
+		<column name="unlocked" type="boolean" required="true" />
+			<validator column="unlocked">
+				<rule
+					name="required"
+					message="Unlocked right is required." />
+			</validator>
+		<column name="right1" type="boolean" required="true" />
+			<validator column="right1">
+				<rule
+					name="required"
+					message="Right1 right is required." />
+			</validator>
+		<column name="right2" type="boolean" required="true" />
+			<validator column="right2">
+				<rule
+					name="required"
+					message="Right2 right is required." />
+			</validator>
+		<foreign-key foreignTable="user" onDelete="CASCADE" phpName="User" refPhpName="Rights">
+			<reference local="user_id" foreign="id" />
+		</foreign-key>
+	</table>
+</database>

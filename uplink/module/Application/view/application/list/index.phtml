@@ -1,0 +1,368 @@
+<link rel="stylesheet" href="/uplink/public/css/jquery-ui.css" />
+<script src="/uplink/public/js/jquery-1.9.1.js"></script>
+<script src="/uplink/public/js/jquery-ui-1.10.2.custom.js"></script>
+
+ <style>
+#feedback { font-size: 10pt; }
+#selectable .ui-selecting { background: #FECA40; }
+#selectable .ui-selected { background: #F39814; color: white; }
+#selectable { list-style-type: none; margin: 0; padding: 3; width: 100%; }
+#selectable li { margin: 3px; padding: 1px; float: left; width: 120px; height: 150px; font-size: 10pt; text-align: center; }
+</style>
+
+<!-- SCRIPT -->
+<script type="text/javascript">
+
+$(function() {
+	$( "#selectable" ).selectable({
+		stop: function() {
+			var result = "";// $( "#select-result" ).empty();
+			$( ".ui-selected", this ).each(function() {
+				var index = $( "#selectable li" ).index( this );
+				if(current_list_user[index])
+				{
+					result += current_list_user[index]['id'] + "##";
+				}
+			});
+			var arrID = splitResult(result);
+			if(arrID.length == 2)
+			{
+				// Only one item found, the last one is null
+				viewUser(arrID[0]);
+			}
+			else
+			{
+				alert("Please choose ONLY one item to display!");
+			}
+		}
+	});
+});
+
+$(document).ready(function(){
+	showList();
+}); 
+
+</script>
+<div class="hero-unit" style="width: 100%">
+    <h2><?php echo sprintf($this->translate('%sList page%s'), '<span class="zf-green">', '</span>') ?></h2>  
+    
+<!-- FORM -->
+<form action="" method="post" name="form_list">
+
+<!-- LOGGED IN USER INFORMATION PART -->
+    <div style="padding-bottom: 20px;" id="user_info_part">
+    	<div style="font-family: arial; font-size:12pt; color: #1c1c1c;">
+			Welcome, <i><font color="#ff4500"><?php echo $this->escapeHtml($message['user']['username']) ?></font></i>
+			&nbsp;&nbsp;|
+				<a href="javascript:onLogOut();" style="text-decoration: none; font-family: arial; font-size: 10pt; font-weight: bold;">
+				LOG OUT
+				</a>
+			<br>
+			<span style="font-weight: bold;">Account Information</span>
+		</div>
+		<div style="padding-top: 10px; font-family: arial; font-size:10pt; font-weight: bold;">
+			<table style="BORDER-COLLAPSE: collapse" cellspacing="0" cellpadding="0" align="center" width="90%">
+				<tr>
+					<td>First name:</td>
+	      			<td width="80%" >
+	      				<div style="font-size: 10pt; color: #0000ff;">
+	      					<?php echo $this->escapeHtml($message['user']['first_name']);?>
+	      				</div>
+	      			</td>
+				</tr>
+				<tr>
+					<td>Last name:</td>
+	      			<td width="80%" >
+	      				<div style="font-size: 10pt; color: #0000ff;">
+	      					<?php echo $this->escapeHtml($message['user']['last_name']);?>
+	      				</div>
+	      			</td>
+				</tr>
+			</table>
+		</div>
+    </div>
+	
+	
+<!-- ADMIN USER PART -->
+<?php if($message['right']['unlocked'] == 1 && $message['right']['right1'] == 1 && $message['right']['right2'] == 1) {?>
+
+<div style="width: 100%; padding: 10px; background-color: #fcfcfc;" id="admin_user_part">
+<div style="border-bottom: 1px solid #cccccc; padding: 10px; font-weight: bold; color: #ff0000;">
+ADMINISTRATION
+</div>
+<div style="padding-left: 10px;" id="add_a_new_user_text" >
+	<a href="javascript: onOpenAddForm();" style="text-decoration: none; font-size: 10pt;">
+	Add a new user
+	</a>
+</div>
+<div style="padding-left: 10px;">
+	<!-- FORM ADD NEW USER -->
+	<div id="add_new_user_form" 
+		style="clear: left; float: left; padding: 10px; padding-top: 10px; display: none;
+				font-family: arial; font-size: 10pt; color: #1c1c1c; width: 40%;">
+		<div style="color: #006400; font-weight: bold;">ADD A NEW USER</div>
+		<table cellpadding="0" cellspacing="0" width="100%">
+			<tbody>
+				<tr>
+					<td><div style="font-weight: bold; padding-right: 5px;">Username:</div></td>
+					<td>
+						<div id="error_username" style="color: #ff0000;"><br></div>
+						<input type="text" name="new_username" id="new_username" value=""  maxlength="20" />
+					</td>
+				</tr>
+				<tr>
+					<td><div style="font-weight: bold; padding-right: 5px;">Password:</div></td>
+					<td>
+						<div id="error_password" style="color: #ff0000;"></div>
+						<input type="password" name="new_password" id="new_password" value=""  maxlength="20" />
+					</td>
+				</tr>
+				<tr>
+					<td><div style="font-weight: bold; padding-right: 5px;">Confirm Password:</div></td>
+					<td>
+						<div id="error_password_confirm" style="color: #ff0000;"></div>
+						<input type="password" name="new_password_confirm" id="new_password_confirm" value=""  maxlength="20" />
+					</td>
+				</tr>
+				<tr>
+					<td><div style="font-weight: bold; padding-right: 5px;">First Name:</div></td>
+					<td>
+						<div id="error_firstname" style="color: #ff0000;"></div>
+						<input type="text" name="new_firstname" id="new_firstname" value=""  maxlength="20" />
+					</td>
+				</tr>
+				<tr>
+					<td><div style="font-weight: bold; padding-right: 5px;">Last Name:</div></td>
+					<td>
+						<div id="error_lastname" style="color: #ff0000;"></div>
+						<input type="text" name="new_lastname" id="new_lastname" value=""  maxlength="20" />	
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		
+		<div id="add_new_user_rights" style="font-family: arial; font-size: 10pt; display: none;">
+		<table>
+			<tr>
+				<td><div style="font-weight: bold; padding-right: 50px;">Rights - Unlocked:</div></td>
+				<td>
+					<input type="checkbox" name="new_unlocked" id="new_unlocked" value="1">
+				</td>
+			</tr>
+			<tr>
+				<td><div style="font-weight: bold; padding-right: 5px;">Rights - Right1:</div></td>
+				<td>
+					<input type="checkbox" name="new_right1" id="new_right1" value="1">
+				</td>
+			</tr>
+			<tr>
+				<td><div style="font-weight: bold; padding-right: 5px;">Rights - Right2:</div></td>
+				<td>
+					<input type="checkbox" name="new_right2" id="new_right2" value="1">
+				</td>
+			</tr>
+		</table>
+		</div>
+		<div>
+			<a href="javascript: onAddUser();" style="text-decoration: none; font-size: 10pt;">
+			Add
+			</a>&nbsp;|&nbsp;
+			<a href="javascript: onAddRights();" style="text-decoration: none; font-size: 10pt;">
+			Add Rights
+			</a>&nbsp;|&nbsp;
+			<a href="javascript: onCancelAddNew();" style="text-decoration: none; font-size: 10pt;">
+			Cancel
+			</a>
+		</div>
+	</div>
+	</div>
+	<!-- Display information part -->
+  <table width="100%">
+  	<tr>
+  	<td width="40%" valign="top">
+	<!-- DISPLAY USER -->
+	<div id="user_information_form" 
+		style="clear: left; float: left; padding: 10px; padding-top: 10px; display: none;
+				font-family: arial; font-size: 10pt; color: #1c1c1c; width: 40%;">
+		<div style="color: #006400; font-weight: bold;">USER INFORMATION</div>
+		<table cellpadding="0" cellspacing="0" width="100%">
+			<tbody>
+				<tr>
+					<td><div style="font-weight: bold; padding-right: 5px;">Username:</div></td>
+					<td>
+						<div id="display_info_username"></div>
+					</td>
+				</tr>
+				<tr>
+					<td><div style="font-weight: bold; padding-right: 5px;">First Name:</div></td>
+					<td>
+						<div id="display_info_first_name"></div>
+					</td>
+				</tr>
+				<tr>
+					<td><div style="font-weight: bold; padding-right: 5px;">Last Name:</div></td>
+					<td>
+						<div id="display_info_last_name"></div>
+					</td>
+				</tr>
+				<tr>
+					<td><div style="color: #006400; font-weight: bold;">RIGHTS</div></td>
+					<td>&nbsp;</td>
+				</tr>
+				<tr>
+					<td><div style="font-weight: bold; padding-right: 5px;">Unlocked:</div></td>
+					<td>
+						<div id="display_info_unlocked"></div>
+					</td>
+				</tr>
+				<tr>
+					<td><div style="font-weight: bold; padding-right: 5px;">Right1:</div></td>
+					<td>
+						<div id="display_info_right1"></div>
+					</td>
+				</tr>
+				<tr>
+					<td><div style="font-weight: bold; padding-right: 5px;">Right2:</div></td>
+					<td>
+						<div id="display_info_right2"></div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div style="font-family: arial; font-size: 10pt;">
+							<a style="text-decoration: none; color: #ff0000;" onmouseover="this.style.color='#3c3c3c';"
+								onmouseout="this.style.color='#ff0000';"
+								href="javascript:onDelete();" >
+								Delete
+							</a>
+						</div>
+					</td>
+					<td>
+						<!-- Edit option for each user -->
+						<div style="font-family: arial; font-size: 10pt; text-align: right;">
+							<a style="text-decoration: none;" href="javascript:onEdit();" >
+								Edit
+							</a>&nbsp;|&nbsp;
+							<a style="text-decoration: none;" href="javascript:onCancel();" >
+								Cancel
+							</a>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<!-- EDIT USER FORM -->
+	<div id="edit_information_form" 
+		style="clear: left; float: left; padding: 10px; padding-top: 10px; display: none;
+				font-family: arial; font-size: 10pt; color: #1c1c1c; width: 40%;">
+		<div style="color: #006400; font-weight: bold;">EDIT USER INFORMATION</div>
+		<table cellpadding="0" cellspacing="0" width="100%">
+			<tbody>
+				<tr>
+					<td><div style="font-weight: bold; padding-right: 5px;">Username:</div></td>
+					<td>
+						<div id="error_edit_username" style="color: #ff0000;"><br></div>
+						<div id="edit_username">
+							<input type="text" name="input_edit_username" id="input_edit_username" value=""  maxlength="20" />
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td><div style="font-weight: bold; padding-right: 5px;">First Name:</div></td>
+					<td>
+						<div id="error_edit_firstname" style="color: #ff0000;"><br></div>
+						<div id="edit_firstname">
+							<input type="text" name="input_edit_firstname" id="input_edit_firstname" value=""  maxlength="20" />
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td><div style="font-weight: bold; padding-right: 5px;">Last Name:</div></td>
+					<td>
+						<div id="error_edit_lastname" style="color: #ff0000;"><br></div>
+						<div id="edit_lastname">
+							<input type="text" name="input_edit_lastname" id="input_edit_lastname" value=""  maxlength="20" />
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td><div style="color: #006400; font-weight: bold;">RIGHTS</div></td>
+					<td>&nbsp;</td>
+				</tr>
+				<tr>
+					<td><div style="font-weight: bold; padding-right: 5px;">Unlocked:</div></td>
+					<td>
+						<div id="edit_unlocked">
+							<input type="checkbox" name="input_edit_unlocked" id="input_edit_unlocked" value="" />
+						</div>
+						<div id="display_info_unlocked"></div>
+					</td>
+				</tr>
+				<tr>
+					<td><div style="font-weight: bold; padding-right: 5px;">Right1:</div></td>
+					<td>
+						<div id="edit_right1">
+							<input type="checkbox" name="input_edit_right1" id="input_edit_right1" value=""/>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td><div style="font-weight: bold; padding-right: 5px;">Right2:</div></td>
+					<td>
+						<div id="edit_right2">
+							<input type="checkbox" name="input_edit_right2" id="input_edit_right2" value=""/>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td>
+						<div id="edit_save">
+							<a href="javascript: onEditSave();" style="text-decoration: none;" >Save</a>&nbsp;|&nbsp;
+							<a href="javascript: onCancelEdit();" style="text-decoration: none;" >Cancel</a>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	</td>
+	<td width="60%" valign="top"> <!-- LIST USERS STARTS HERE -->
+	<div style="padding-top: 10px; width: 100%; display: none; overflow:scroll; height: 400px;" id="list_user_part">
+	    <table style="BORDER-COLLAPSE: collapse" cellspacing="0" cellpadding="5" align="center" width="100%">
+		<tbody>
+			<tr> 
+			<td style="border: 1px solid #cccccc;">
+				<div style="font-family: arial; font-size: 10pt; padding-left: 10px;
+						font-weight: bold; color: #ffffff; background-color: #006400;">
+				LIST OF USERS INCLUDING THEIR RIGHTS
+				</div>
+			</td>
+			</tr>
+			<tr> 
+			<td style="border: 1px solid #cccccc; padding: 5px;">
+			<!-- Show list here -->
+			<div style="font-family: arial; font-size: 10pt; color: #1c1c1c;">
+				<ol id="selectable">
+				</ol>
+			</div>
+			</td>
+			</tr>
+		</tbody>    
+	    </table>
+	</div>
+	</td> <!-- LIST USERS ENDS HERE -->
+	</tr>
+	</table>
+	
+</div>
+<?php } ?>
+
+
+
+</form>
+</div>
+
